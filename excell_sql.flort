@@ -1,0 +1,129 @@
+Florted: 2024-09-20 07:49:53
+|   |-- src/
+|   |   |-- __init__.py
+|   |   |-- excel-driver.py
+|   |-- test/
+|   |   |-- test.py
+
+Path: src/__init__.py
+File: __init__.py
+-------
+import excel_db
+Path: src/excel-driver.py
+File: excel-driver.py
+-------
+import pandas as pd
+from openpyxl import load_workbook
+from sqlalchemy import create_engine, MetaData, Table, Column, String
+from sqlalchemy.orm import sessionmaker
+import sqlite3
+
+class excel_db:
+    def __init__(self, excel_path, db_path=':memory:'):
+        self.excel_path = excel_path
+        self.db_path = db_path
+
+        # Create engine using pysqlite3
+        self.engine = create_engine(f"sqlite+pysqlite:///{db_path}", echo=False, future=True)
+        self.metadata = MetaData(bind=self.engine)
+        self.Session = sessionmaker(bind=self.engine)
+        self.session = self.Session()
+
+        # Initialize the database by loading workbook sheets
+        self.load_workbook_into_db()
+
+    def load_workbook_into_db(self):
+        """
+        Load every sheet from the Excel workbook into SQLite tables using SQLAlchemy and pysqlite3.
+        """
+        workbook = load_workbook(self.excel_path, keep_vba=True)  # Load macros if present
+        sheet_names = workbook.sheetnames
+
+        for sheet_name in sheet_names:
+            # Load each sheet as a DataFrame
+            df = pd.read_excel(self.excel_path, sheet_name=sheet_name)
+
+            # Create a table for each sheet in the SQLite database
+            self.df_to_sql(df, sheet_name)
+
+            # Capture formulas or macros as metadata
+            self.capture_sheet_metadata(workbook[sheet_name], sheet_name)
+
+    def df_to_sql(self, df, table_name):
+        """
+        Convert a DataFrame to a SQLAlchemy table and store it in the SQLite database.
+        """
+        columns = [Column(col, String, nullable=True) for col in df.columns]
+        table = Table(table_name, self.metadata, *columns)
+
+        # Create the table if it doesn't exist
+        self.metadata.create_all(self.engine)
+
+        # Insert DataFrame rows into the table
+        df.to_sql(table_name, self.engine, if_exists='replace', index=False)
+
+    def capture_sheet_metadata(self, worksheet, sheet_name):
+        """
+        Capture metadata such as formulas from the worksheet and store it in SQLite.
+        """
+        metadata_table = f"{sheet_name}_metadata"
+
+        # Define a metadata table for formulas
+        metadata_columns = [
+            Column('cell', String, nullable=False),
+            Column('formula', String, nullable=True)
+        ]
+        metadata_table = Table(metadata_table, self.metadata, *metadata_columns)
+        self.metadata.create_all(self.engine)
+
+        # Prepare the data to insert
+        metadata_entries = []
+        for row in worksheet.iter_rows():
+            for cell in row:
+                if cell.data_type == 'f':  # 'f' means the cell contains a formula
+                    metadata_entries.append({
+                        'cell': cell.coordinate,
+                        'formula': cell.value
+                    })
+
+        # Insert the metadata (formulas) into the database
+        if metadata_entries:
+            self.engine.execute(metadata_table.insert(), metadata_entries)
+
+    def execute_query(self, query):
+        """
+        Execute raw SQL queries using the pysqlite3 connection.
+        """
+        with self.engine.connect() as conn:
+            result = conn.execute(query)
+            return result.fetchall()
+
+    def close(self):
+        """
+        Close the session and the database connection.
+        """
+        self.session.close()
+
+Path: test/test.py
+File: test.py
+-------
+from .. import src
+
+
+xls_file='./data/file_example_XLS_5000.xls'
+db_file='./data/excel_db.sqlite'
+
+# Example usage
+driver = excel_db(xls_file, db_path=sb_file)
+
+# Example: Query the data from one of the sheets
+result = driver.execute_query('SELECT * FROM Sheet1 LIMIT 10')
+print(result)
+
+# Example: Query metadata for a specific sheet (formulas)
+metadata_result = driver.execute_query('SELECT * FROM Sheet1_metadata')
+print(metadata_result)
+
+# Close the driver connection
+driver.close()
+

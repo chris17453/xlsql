@@ -1,0 +1,21 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+pandas = "*"
+openpyxl = "*"
+sqlalchemy = "*"
+sqlalchemy-pysqlite3 = "*"
+xlrd = "*"
+xlwt = "*"
+pyxlsb = "*"
+ll = "*"
+pyexcel-xls = "*"
+pyexcel = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.12"
