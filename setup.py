@@ -6,9 +6,9 @@ this_directory = Path(__file__).parent
 long_description = (this_directory / "README.md").read_text()
 
 setup(
-    name='xlsql',  # Your package name
+    name='excelsql',  # Your package name
     version='0.1.0',  # Initial version
-    description='A Python driver to use SQL on Excel workbooks with CRUD, using SQLite as a middleman,
+    description='A Python driver to use SQL on Excel workbooks with CRUD, using SQLite as a middleman',
     long_description=long_description,
     long_description_content_type='text/markdown',  # This is important for PyPI
     url='https://github.com/chris17453/xlsql',  # Update with your repo URL
@@ -32,7 +32,7 @@ setup(
     classifiers=[
         'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
-        'License :: OSI Approved :: BSD 3 License',
+        'License :: OSI Approved :: BSD License',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',

@@ -1,0 +1,9 @@
+pandas
+openpyxl
+pyexcel-xls
+pyexcel
+sqlalchemy
+pysqlite3
+xlrd
+xlwt
+pyxlsb

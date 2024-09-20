@@ -20,4 +20,4 @@ publish: build
 
 # Run tests (if any tests exist)
 test:
-	pytest
+	python -m test.test

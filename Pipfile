@@ -14,6 +14,7 @@ pyxlsb = "*"
 ll = "*"
 pyexcel-xls = "*"
 pyexcel = "*"
+setuptools = "*"
 
 [dev-packages]
 
