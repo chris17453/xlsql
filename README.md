@@ -135,7 +135,7 @@ driver.export_visualization('Sheet1', x_col='Age', y_col='Salary', plot_type='ba
 
 Below is an example of a bar chart visualization generated from the `Sheet1` dataset:
 
-![Bar Chart Visualization](./data/Sheet1_bar_Age_Salary.png)
+![Bar Chart Visualization](./data/Sheet1_bar_Gender_Age.png)
 
 ### Caching Queries for Speed Optimization
 
