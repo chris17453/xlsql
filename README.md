@@ -1,4 +1,4 @@
-# xlsql
+# excelsql
 
 `excelsql` is a Python package that allows you to load Excel workbooks (`.xls` and `.xlsx` formats) into an SQLite database, perform SQL queries on the data, and modify or extend the data within the workbook. It also supports saving the modified data back into the original Excel format.
 
@@ -15,7 +15,7 @@
 To install the package, run:
 
 ```bash
-pip install xlsql
+pip install excelsql
 ```
 
 ### Additional Requirements
@@ -34,7 +34,7 @@ Here’s how to get started with `xlsql`:
 ### 1. Load an Excel file into SQLite and query data
 
 ```python
-from xlsql import excel_db
+from excelsql import excel_db
 import pandas as pd
 
 # Path to the Excel file
