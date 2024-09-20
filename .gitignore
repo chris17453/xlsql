@@ -2,3 +2,4 @@
 dist
 *.flort
 *.egg-info
+__pycache__
