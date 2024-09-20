@@ -114,7 +114,7 @@ if 'Sheet1' in worksheets:
 
     # Step 14: Display data in Jupyter notebook (only works inside a notebook environment)
     # Uncomment the line below if running in a Jupyter Notebook
-    driver.display_in_notebook('Sheet1')
+    #driver.display_in_notebook('Sheet1')
 
 else:
     print("Sheet 'Sheet1' not found. Aborting process.")
