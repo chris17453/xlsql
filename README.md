@@ -1,6 +1,6 @@
 # xlsql
 
-`xlsql` is a Python package that allows you to load Excel workbooks (`.xls` and `.xlsx` formats) into an SQLite database, perform SQL queries on the data, and modify or extend the data within the workbook. It also supports saving the modified data back into the original Excel format.
+`excelsql` is a Python package that allows you to load Excel workbooks (`.xls` and `.xlsx` formats) into an SQLite database, perform SQL queries on the data, and modify or extend the data within the workbook. It also supports saving the modified data back into the original Excel format.
 
 ## Features
 
