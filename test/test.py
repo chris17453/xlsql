@@ -1,11 +1,11 @@
-from src import excel_db
+from excelsql import excelsql
 import pandas as pd
 
 xls_file = './data/file_example_XLS_5000.xls'  # Or .xlsx file
 db_file = './data/excel_db.sqlite'
 
 # Create the driver
-driver = excel_db(xls_file, db_path=db_file)
+driver = excelsql(xls_file, db_path=db_file)
 
 # Show available worksheets
 worksheets = driver.show_worksheets()

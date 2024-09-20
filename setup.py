@@ -7,7 +7,7 @@ long_description = (this_directory / "README.md").read_text()
 
 setup(
     name='excelsql',  # Your package name
-    version='0.1.0',  # Initial version
+    version='0.1.33',  # Initial version
     description='A Python driver to use SQL on Excel workbooks with CRUD, using SQLite as a middleman',
     long_description=long_description,
     long_description_content_type='text/markdown',  # This is important for PyPI
@@ -16,7 +16,7 @@ setup(
     author_email='chris@watkinslabs.com',
     license='BSD 3',
     packages=find_packages(where='src'),  # Specify where to find the source code
-    package_dir={'': 'src'},  # Tell setuptools the source directory is `src`
+    package_dir={'': 'excelsql'},  # Tell setuptools the source directory is `src`
     install_requires=[
         'pandas',
         'openpyxl',

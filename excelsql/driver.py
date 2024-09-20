@@ -5,7 +5,7 @@ from sqlalchemy.orm import sessionmaker
 import xlrd  # For reading .xls files
 import pyexcel as p  # For writing .xls files
 
-class excel_db:
+class excelsql:
     def __init__(self, excel_path, db_path=':memory:'):
         self.excel_path = excel_path
         self.db_path = db_path

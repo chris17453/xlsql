@@ -1,8 +1,0 @@
-README.md
-setup.py
-src/xlsql.egg-info/PKG-INFO
-src/xlsql.egg-info/SOURCES.txt
-src/xlsql.egg-info/dependency_links.txt
-src/xlsql.egg-info/requires.txt
-src/xlsql.egg-info/top_level.txt
-test/test.py
