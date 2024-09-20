@@ -7,7 +7,7 @@ long_description = (this_directory / "README.md").read_text()
 
 setup(
     name='excelsql',  # Your package name
-    version='0.1.33',  # Initial version
+    version='0.1.35',  # Initial version
     description='A Python driver to use SQL on Excel workbooks with CRUD, using SQLite as a middleman',
     long_description=long_description,
     long_description_content_type='text/markdown',  # This is important for PyPI
@@ -26,7 +26,8 @@ setup(
         'pysqlite3',
         'xlrd',
         'xlwt',
-        'pyxlsb'
+        'pyxlsb',
+        'matplotlib'
     ],
     python_requires='>=3.6',
     classifiers=[

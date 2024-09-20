@@ -1,121 +1,181 @@
 # excelsql
 
-`excelsql` is a Python package that allows you to load Excel workbooks (`.xls` and `.xlsx` formats) into an SQLite database, perform SQL queries on the data, and modify or extend the data within the workbook. It also supports saving the modified data back into the original Excel format.
+`excelsql` is a lightweight Python package that allows you to load Excel workbooks (`.xls` and `.xlsx` formats) into an SQLite database, perform SQL operations, and save changes back into the original format. It's designed to combine the ease of Excel with the power of SQL, streamlining data manipulation and analysis.
+
+## Table of Contents
+
+1. [Features](#features)
+2. [Installation](#installation)
+3. [Usage](#usage)
+4. [Features in Detail](#features-in-detail)
+   - [SQL Query Interface with Pandas Integration](#sql-query-interface-with-pandas-integration)
+   - [Schema Validation and Modification](#schema-validation-and-modification)
+   - [Batch Processing and Multi-file Support](#batch-processing-and-multi-file-support)
+   - [Data Cleaning Functions](#data-cleaning-functions)
+   - [Joins and Merging Data Across Sheets](#joins-and-merging-data-across-sheets)
+   - [Advanced Reporting & Visualization Support](#advanced-reporting--visualization-support)
+   - [Caching Queries for Speed Optimization](#caching-queries-for-speed-optimization)
+   - [Export to Multiple Formats](#export-to-multiple-formats)
+   - [Jupyter Notebook Integration](#jupyter-notebook-integration)
+5. [Contributing](#contributing)
+6. [License](#license)
+
+---
 
 ## Features
 
-- Supports both `.xls` and `.xlsx` file formats.
-- Loads Excel worksheets into an SQLite database for easy SQL operations.
-- Allows you to create new worksheets, insert new rows, and modify existing data.
-- Saves the workbook with all modifications in the original format (`.xls` or `.xlsx`).
-- Execute SQL queries on the loaded data using SQLAlchemy and SQLite.
+- Load Excel files into an SQLite database for SQL querying.
+- Perform SQL operations on the data (SELECT, INSERT, JOIN, etc.).
+- Return SQL query results as Pandas DataFrames.
+- Clean and normalize data in Excel sheets.
+- Validate and modify the schema (add/remove columns).
+- Support for batch processing and merging multiple Excel workbooks.
+- Generate reports and visualizations.
+- Caching for repeated queries.
+- Export data to multiple formats (CSV, JSON, etc.).
+- Jupyter Notebook integration for displaying data.
+
+---
 
 ## Installation
 
-To install the package, run:
+To install `excelsql`, run the following command:
 
 ```bash
 pip install excelsql
 ```
 
-### Additional Requirements
+---
 
-You may need to install some system dependencies depending on your platform:
+## Usage
 
-```bash
-# On Fedora-based systems (e.g., Fedora, CentOS):
-dnf install python-devel sqlite-devel
-```
-
-## Quick Start
-
-Here’s how to get started with `xlsql`:
-
-### 1. Load an Excel file into SQLite and query data
+### Loading an Excel File
 
 ```python
-from excelsql import excel_db
-import pandas as pd
+import excelsql
 
 # Path to the Excel file
-xls_file = './data/file_example_XLS_5000.xls'  # Or .xlsx file
-db_file = './data/excel_db.sqlite'  # SQLite database (in-memory or on disk)
+xls_file = './data/file_example_XLS_5000.xls'
+db_file = './data/excel_db.sqlite'
 
 # Initialize the driver
-driver = excel_db(xls_file, db_path=db_file)
+driver = excelsql(xls_file, db_path=db_file)
 
-# Show available worksheets in the Excel file
+# Show worksheets
 worksheets = driver.show_worksheets()
 
-# Show the columns of a specific worksheet (e.g., 'Sheet1')
-if 'Sheet1' in worksheets:
-    columns = driver.show_columns('Sheet1')
+# Perform SQL query and return results as a DataFrame
+df = driver.execute_query_to_dataframe('SELECT * FROM Sheet1')
 
-# Query some data from 'Sheet1'
-result = driver.execute_query('SELECT * FROM Sheet1 LIMIT 10')
-print(result)
-```
+# Save changes back to an Excel file
+driver.save_to_file('./data/modified_file.xlsx')
 
-### 2. Copy Data to a New Worksheet and Insert Rows
-
-```python
-# Copy data from 'Sheet1' to a new worksheet 'CopiedSheet'
-df = pd.read_sql('SELECT * FROM Sheet1', driver.engine)
-df.to_sql('CopiedSheet', driver.engine, if_exists='replace', index=False)
-print("Copied data to 'CopiedSheet'.")
-
-# Insert new rows into a new worksheet 'NewSheet'
-new_rows = [
-    {'First Name': 'John', 'Last Name': 'Doe', 'Gender': 'Male', 'Country': 'USA', 'Age': 28, 'Date': '2024-09-20', 'Id': 5001},
-    {'First Name': 'Jane', 'Last Name': 'Smith', 'Gender': 'Female', 'Country': 'UK', 'Age': 34, 'Date': '2024-09-21', 'Id': 5002},
-    {'First Name': 'Alice', 'Last Name': 'Johnson', 'Gender': 'Female', 'Country': 'Canada', 'Age': 29, 'Date': '2024-09-22', 'Id': 5003}
-]
-
-new_rows_df = pd.DataFrame(new_rows)
-new_rows_df.to_sql('NewSheet', driver.engine, if_exists='replace', index=False)
-print("Inserted 3 new rows into 'NewSheet'.")
-```
-
-### 3. Save the Modified Workbook
-
-Once you've copied data or inserted new rows, you can save the Excel workbook, and it will preserve the original format (`.xls` or `.xlsx`):
-
-```python
-# Save the Excel file with all changes
-driver.save_to_file('./data/modified_file.xls')  # Or .xlsx depending on original format
-
-# Close the driver connection
+# Close the connection
 driver.close()
 ```
 
-## API Reference
+---
 
-### `excel_db`
+## Features in Detail
 
-The `excel_db` class provides methods for loading Excel files into SQLite, performing SQL queries, and modifying the workbook.
+### SQL Query Interface with Pandas Integration
 
-#### Methods:
+Run SQL queries and return the results as a Pandas DataFrame.
 
-- **`show_worksheets()`**: Displays the names of all worksheets in the Excel file.
-  ```python
-  worksheets = driver.show_worksheets()
-  ```
+```python
+df = driver.execute_query_to_dataframe('SELECT * FROM Sheet1 WHERE Age > 30')
+```
 
-- **`show_columns(sheet_name)`**: Displays the column names of the specified worksheet.
-  ```python
-  columns = driver.show_columns('Sheet1')
-  ```
+### Schema Validation and Modification
 
-- **`execute_query(query)`**: Executes a raw SQL query on the data stored in the SQLite database.
-  ```python
-  result = driver.execute_query('SELECT * FROM Sheet1 LIMIT 10')
-  ```
+- **`validate_schema`**: Validate the schema for a worksheet.
+- **`add_column`**: Add new columns to a worksheet.
 
-- **`save_to_file(output_path)`**: Saves the modified workbook (including new worksheets) back into an Excel file in the original format.
-  ```python
-  driver.save_to_file('./data/modified_file.xls')  # Or .xlsx
-  ```
+```python
+driver.add_column('Sheet1', 'NewColumn', datatype='TEXT')
+driver.validate_schema('Sheet1', validations={'Age': 'numeric', 'Date': 'date'})
+```
+
+### Batch Processing and Multi-file Support
+
+Load and merge multiple Excel workbooks.
+
+```python
+driver.load_multiple_workbooks(['file1.xlsx', 'file2.xlsx'])
+driver.merge_workbooks('Sheet1', 'Sheet2', on='Id', how='inner')
+```
+
+### Data Cleaning Functions
+
+- **`clean_data`**: Remove or fill missing values.
+- **`normalize`**: Normalize the values of numeric columns.
+
+```python
+driver.clean_data('Sheet1', strategy='dropna')
+driver.normalize('Sheet1', columns=['Age'])
+```
+
+### Joins and Merging Data Across Sheets
+
+Join multiple worksheets using SQL-style operations.
+
+```python
+driver.join_sheets('Sheet1', 'Sheet2', on='Id', how='inner')
+```
+
+### Advanced Reporting & Visualization Support
+
+- **`generate_report`**: Generate descriptive statistics and save as an Excel file.
+- **`export_visualization`**: Create visualizations (bar, line, area charts) from data.
+
+```python
+driver.generate_report('Sheet1', output='./data/summary.xlsx')
+driver.export_visualization('Sheet1', x_col='Age', y_col='Salary', plot_type='bar', output_path='./data/visuals')
+```
+
+Below is an example of a bar chart visualization generated from the `Sheet1` dataset:
+
+![Bar Chart Visualization](./data/visuals/Sheet1_bar_Age_Salary.png)
+
+### Caching Queries for Speed Optimization
+
+Enable caching of frequent SQL queries to speed up repeated requests.
+
+```python
+driver.enable_query_cache()
+```
+
+### Export to Multiple Formats
+
+- **`export_to_csv`**: Export worksheet data to CSV.
+- **`export_to_json`**: Export worksheet data to JSON.
+
+```python
+driver.export_to_csv('Sheet1', './data/output.csv')
+driver.export_to_json('Sheet1', './data/output.json')
+```
+
+You can find example exported data formats below:
+
+- [CSV Export Example](./data/output.csv)
+- [JSON Export Example](./data/output.json)
+
+### Jupyter Notebook Integration
+
+Display data directly in Jupyter notebooks for quick data inspection.
+
+```python
+driver.display_in_notebook('Sheet1')
+```
+
+---
+
+## Contributing
+
+Contributions are welcome! Feel free to open an issue or submit a pull request on [GitHub](https://github.com/chris17453/xlsql).
+
+---
 
 ## License
 
-This project is licensed under the BSD 3 License.
+This project is licensed under the BSD 3-Clause License. See the [LICENSE](./LICENSE) file for details.
